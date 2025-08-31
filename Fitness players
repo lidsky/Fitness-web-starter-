@@ -1,0 +1,74 @@
+{
+  "name": "Fit Planner",
+  "short_name": "FitPlan",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="/icon-192.png">
+const CACHE = 'fitplan-v1';
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/', '/index.html'])));
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+});
+import { NavLink, Routes, Route } from 'react-router-dom'
+
+const Tab = ({to, children}) => (
+  <NavLink to={to} style={({isActive})=>({ padding:12, textDecoration:'none', fontWeight:isActive?600:400 })}>
+    {children}
+  </NavLink>
+)
+
+export default function App(){
+  return (
+    <div style={{maxWidth:900, margin:'0 auto', padding:16}}>
+      <h2>Fit Planner</h2>
+      <nav style={{display:'flex', gap:12, borderTop:'1px solid #eee', paddingTop:8}}>
+        <Tab to="/">Home</Tab>
+        <Tab to="/muscles">Muscle Map</Tab>
+        <Tab to="/exercises">Exercises</Tab>
+        <Tab to="/recovery">Yoga/Cardio</Tab>
+        <Tab to="/recipes">Recipes</Tab>
+        <Tab to="/planner">Planner</Tab>
+      </nav>
+      <Routes>
+        <Route path="/" element={<Home/>}/>
+        <Route path="/muscles" element={<MuscleMap/>}/>
+        <Route path="/exercises" element={<Exercises/>}/>
+        <Route path="/recovery" element={<Recovery/>}/>
+        <Route path="/recipes" element={<Recipes/>}/>
+        <Route path="/planner" element={<Planner/>}/>
+      </Routes>
+    </div>
+  )
+}
+
+function Home(){ return <p>Welcome. Log in to sync.</p> }
+function Exercises(){ return <p>Exercise list goes here.</p> }
+function Recovery(){ return <p>Yoga / cardio sessions.</p> }
+function Recipes(){ return <p>Recipe cards + macros.</p> }
+function Planner(){ return <p>Calendar/agenda with items.</p> }
+function MuscleMap(){
+  return (
+    <div>
+      <p>Tap a muscle to filter exercises.</p>
+      {/* Replace with real SVG */}
+      <svg viewBox="0 0 200 400" width="100%" style={{background:'#f8f8f8'}}>
+        <g onClick={()=>alert('Chest')}>
+          <rect x="70" y="80" width="60" height="30" fill="#ddd"/>
+          <text x="80" y="100" fontSize="10">Chest</text>
+        </g>
+      </svg>
+    </div>
+  )
+}
