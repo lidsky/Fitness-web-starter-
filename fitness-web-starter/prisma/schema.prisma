@@ -1,0 +1,49 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?
+  profiles     Profile?
+  plannerItems PlannerItem[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Profile {
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  heightCm  Int
+  weightKg  Float
+  sex       String
+  age       Int
+  activity  Float
+  goal      String
+  tdeeKcal  Int
+  macros    Json
+  user      User    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlannerItem {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  startAt   DateTime
+  endAt     DateTime
+  color     String
+  status    String   @default("scheduled")
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
